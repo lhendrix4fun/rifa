@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifa Semi Jóias</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff5f7;
+            color: #d63384;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #b00060;
+        }
+
+        .description {
+            font-size: 1.2em;
+            background-color: #ffe6ef;
+            padding: 15px;
+            border: 1px solid #b00060;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+
+        input[type="number"], input[type="text"] {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #b00060;
+            border-radius: 5px;
+            width: 70%;
+        }
+
+        .btn {
+            background-color: #b00060;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background-color: #900048;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #b00060;
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ffe6ef;
+            color: #b00060;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rifa Semi Jóias</h1>
+
+        <div class="description">
+            <p>Concorra a <strong>R$ 700</strong> em <strong>SEMI JÓIAS</strong></p>
+            <p>São 3 sorteios:</p>
+            <ul>
+                <li>1° e 2° sorteios: R$ 200 em joias cada!</li>
+                <li>3° sorteio: R$ 300 em joias!</li>
+            </ul>
+            <p><strong>Chave Pix:</strong> Telefone <strong>(67) 99246-7715</strong></p>
+            <p>Cada número custa apenas <strong>R$ 5,00</strong></p>
+        </div>
+
+        <form id="createRaffle" class="form-container">
+            <label for="raffleCount">Quantidade de Números:</label>
+            <input type="number" id="raffleCount" name="raffleCount" min="1" required>
+            <button type="submit" class="btn">Criar Rifa</button>
+        </form>
+
+        <div id="raffleContainer">
+            <table id="raffleTable">
+                <thead>
+                    <tr>
+                        <th colspan="10">Rifa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os números da rifa serão gerados aqui -->
+                </tbody>
+            </table>
+        </div>
+
+        <button id="saveButton" class="btn">Salvar Dados</button>
+        <button id="loadButton" class="btn">Carregar Rifa</button>
+    </div>
+
+    <script>
+        function saveRaffle(data) {
+            localStorage.setItem('raffleData', JSON.stringify(data));
+        }
+
+        function loadRaffle() {
+            const savedData = JSON.parse(localStorage.getItem('raffleData'));
+            if (!savedData) return [];
+            return savedData;
+        }
+
+        function renderRaffle(data) {
+            const tableBody = document.getElementById('raffleTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            let row = null;
+
+            data.forEach(({ number, buyer }, index) => {
+                if (index % 10 === 0) {
+                    row = document.createElement('tr');
+                    tableBody.appendChild(row);
+                }
+
+                const cell = document.createElement('td');
+                const numberDiv = document.createElement('div');
+                numberDiv.classList.add('circle');
+                numberDiv.textContent = number;
+
+                const inputField = document.createElement('input');
+                inputField.type = 'text';
+                inputField.placeholder = 'Comprador';
+                inputField.value = buyer || '';
+                inputField.dataset.number = number;
+
+                inputField.addEventListener('input', () => {
+                    data[index].buyer = inputField.value;
+                    saveRaffle(data);
+                });
+
+                cell.appendChild(numberDiv);
+                cell.appendChild(inputField);
+                row.appendChild(cell);
+            });
+
+            while (row && row.children.length < 10) {
+                const emptyCell = document.createElement('td');
+                row.appendChild(emptyCell);
+            }
+        }
+
+        document.getElementById('createRaffle').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const count = parseInt(document.getElementById('raffleCount').value);
+            const data = Array.from({ length: count }, (_, i) => ({ number: i + 1, buyer: '' }));
+
+            saveRaffle(data);
+            renderRaffle(data);
+        });
+
+        document.getElementById('saveButton').addEventListener('click', function () {
+            const inputs = document.querySelectorAll('#raffleTable input');
+            const data = Array.from(inputs).map(input => ({
+                number: input.dataset.number,
+                buyer: input.value.trim()
+            }));
+
+            saveRaffle(data);
+
+            const blob = new Blob([data.map(item => `Número ${item.number}: ${item.buyer}`).join('\n')], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'rifa.txt';
+            a.click();
+        });
+
+        document.getElementById('loadButton').addEventListener('click', function () {
+            const data = loadRaffle();
+            renderRaffle(data);
+        });
+
+        // Load existing raffle on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const data = loadRaffle();
+            if (data.length) {
+                renderRaffle(data);
+            }
+        });
+    </script>
+</body>
+</html>

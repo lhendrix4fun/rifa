@@ -1,0 +1,117 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffe6f0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    color: #d63384;
+}
+
+.form-container {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: #d63384;
+}
+
+input[type="number"], input[type="text"] {
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid #d63384;
+    border-radius: 5px;
+    width: 5%;
+}
+
+.btn {
+    background-color: #d63384;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background-color: #b3246e;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #d63384;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ffb3d9;
+    color: #d63384;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    font-weight: bold;
+}
+<style>
+    /* Responsividade */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2em;
+        }
+
+        .description {
+            font-size: 1em;
+            padding: 10px;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 90%; /* Ajusta para ocupar mais espaço na tela menor */
+        }
+
+        table {
+            font-size: 0.9em; /* Reduz levemente o tamanho da tabela */
+        }
+
+        .circle {
+            width: 30px; /* Reduz o tamanho dos círculos */
+            height: 30px;
+            font-size: 0.8em; /* Texto menor dentro dos círculos */
+        }
+
+        .btn {
+            font-size: 14px; /* Botões menores */
+            padding: 8px 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        th, td {
+            padding: 5px; /* Menor espaçamento em tabelas */
+        }
+
+        .btn {
+            font-size: 12px; /* Botões ainda mais compactos */
+            padding: 5px 10px;
+        }
+    }
+</style>
