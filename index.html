@@ -39,7 +39,7 @@
             margin-bottom: 20px;
         }
 
-        input[type="number"], input[type="text"] {
+        input[type="number"], input[type="text"], input[type="file"] {
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #b00060;
@@ -87,6 +87,14 @@
             margin: 0 auto;
             font-weight: bold;
         }
+
+        .rifa-buttons {
+            margin-top: 20px;
+        }
+
+        .rifa-buttons button {
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -105,6 +113,8 @@
         </div>
 
         <form id="createRaffle" class="form-container">
+            <label for="raffleName">Nome da Rifa:</label>
+            <input type="text" id="raffleName" name="raffleName" placeholder="Ex: Rifa A" required>
             <label for="raffleCount">Quantidade de Números:</label>
             <input type="number" id="raffleCount" name="raffleCount" min="1" required>
             <button type="submit" class="btn">Criar Rifa</button>
@@ -123,19 +133,26 @@
             </table>
         </div>
 
+        <div id="buttonsContainer" class="rifa-buttons">
+            <!-- Botões para selecionar rifas aparecerão aqui -->
+        </div>
+
+        <input type="file" id="fileInput" class="btn" accept=".txt">
         <button id="saveButton" class="btn">Salvar Dados</button>
-        <button id="loadButton" class="btn">Carregar Rifa</button>
+        <button id="printButton" class="btn">Imprimir Rifa</button>
     </div>
 
     <script>
-        function saveRaffle(data) {
-            localStorage.setItem('raffleData', JSON.stringify(data));
+        let rifas = {}; // Objeto para armazenar todas as rifas criadas
+
+        function saveRaffle(data, name) {
+            rifas[name] = data;
+            localStorage.setItem('rifas', JSON.stringify(rifas));
+            renderRaffleButtons();
         }
 
-        function loadRaffle() {
-            const savedData = JSON.parse(localStorage.getItem('raffleData'));
-            if (!savedData) return [];
-            return savedData;
+        function loadRaffle(name) {
+            return rifas[name] || [];
         }
 
         function renderRaffle(data) {
@@ -163,7 +180,7 @@
 
                 inputField.addEventListener('input', () => {
                     data[index].buyer = inputField.value;
-                    saveRaffle(data);
+                    saveRaffle(data, document.getElementById('raffleName').value);
                 });
 
                 cell.appendChild(numberDiv);
@@ -177,43 +194,112 @@
             }
         }
 
+        function renderRaffleButtons() {
+            const buttonsContainer = document.getElementById('buttonsContainer');
+            buttonsContainer.innerHTML = '';
+
+            Object.keys(rifas).forEach(name => {
+                const button = document.createElement('button');
+                button.textContent = name;
+                button.classList.add('btn');
+                button.addEventListener('click', () => {
+                    const data = loadRaffle(name);
+                    renderRaffle(data);
+                    document.getElementById('raffleName').value = name;
+                });
+                buttonsContainer.appendChild(button);
+            });
+        }
+
         document.getElementById('createRaffle').addEventListener('submit', function (e) {
             e.preventDefault();
 
+            const name = document.getElementById('raffleName').value.trim();
             const count = parseInt(document.getElementById('raffleCount').value);
+
+            if (!name) {
+                alert('Por favor, insira um nome para a rifa.');
+                return;
+            }
+
             const data = Array.from({ length: count }, (_, i) => ({ number: i + 1, buyer: '' }));
 
-            saveRaffle(data);
+            saveRaffle(data, name);
             renderRaffle(data);
         });
 
         document.getElementById('saveButton').addEventListener('click', function () {
-            const inputs = document.querySelectorAll('#raffleTable input');
-            const data = Array.from(inputs).map(input => ({
-                number: input.dataset.number,
-                buyer: input.value.trim()
-            }));
+            const blob = new Blob([
+                Object.entries(rifas).map(([name, data]) => {
+                    return `Rifa: ${name}\n` + data.map(item => `Número ${item.number}: ${item.buyer}`).join('\n');
+                }).join('\n\n')
+            ], { type: 'text/plain' });
 
-            saveRaffle(data);
-
-            const blob = new Blob([data.map(item => `Número ${item.number}: ${item.buyer}`).join('\n')], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'rifa.txt';
+            a.download = 'rifas.txt';
             a.click();
         });
 
-        document.getElementById('loadButton').addEventListener('click', function () {
-            const data = loadRaffle();
-            renderRaffle(data);
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const content = event.target.result;
+                const loadedRifas = {};
+
+                content.split(/\n\n/).forEach(block => {
+                    const lines = block.split('\n');
+                    const nameLine = lines.shift();
+                    const name = nameLine.replace('Rifa: ', '').trim();
+
+                    const data = lines.map(line => {
+                        const [numberPart, buyerPart] = line.split(': ');
+                        return {
+                            number: parseInt(numberPart.replace('Número ', '').trim()),
+                            buyer: buyerPart ? buyerPart.trim() : ''
+                        };
+                    });
+
+                    loadedRifas[name] = data;
+                });
+
+                rifas = { ...rifas, ...loadedRifas };
+                localStorage.setItem('rifas', JSON.stringify(rifas));
+                renderRaffleButtons();
+                alert('Rifas carregadas com sucesso!');
+            };
+
+            reader.readAsText(file);
         });
 
-        // Load existing raffle on page load
+        document.getElementById('printButton').addEventListener('click', function () {
+            const printContent = Object.entries(rifas).map(([name, data]) => {
+                return `
+                <div class="container">
+                    <h1>${name}</h1>
+                    <table border="1" style="width:100%;text-align:center;margin-top:10px;">
+                    ${data.map((item, index) => {
+                        if (index % 10 === 0) {
+                            return `<tr>${data.slice(index, index + 10).map(subitem => `<td><div class='circle'>${subitem.number}</div><br>${subitem.buyer || ''}</td>`).join('')}</tr>`;
+                        }
+                        return '';
+                    }).join('')}
+                    </table>
+                </div>`;
+            }).join('<hr>');
+
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write(`<html><head><title>Rifas</title></head><body>${printContent}</body></html>`);
+            newWindow.document.close();
+            newWindow.print();
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
-            const data = loadRaffle();
-            if (data.length) {
-                renderRaffle(data);
-            }
+            rifas = JSON.parse(localStorage.getItem('rifas')) || {};
+            renderRaffleButtons();
         });
     </script>
 </body>
