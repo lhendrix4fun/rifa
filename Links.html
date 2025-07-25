@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links do ADMIN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #1e90ff;
+        }
+        
+        h1 {
+            color: #1e90ff; /* Azul claro */
+            font-size: 2.8rem;
+            text-shadow: 0 0 10px rgba(30, 144, 255, 0.7);
+            letter-spacing: 1px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .link-card {
+            background-color: #111;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid #222;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2);
+        }
+        
+        .link-card a {
+            display: block;
+            color: #1e90ff; /* Azul claro */
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+        
+        .link-card a:hover {
+            background-color: #555; /* Cinza */
+            color: #fff;
+        }
+        
+        .link-card .link-desc {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #aaa;
+            padding: 0 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Links do ADMIN</h1>
+        </header>
+        
+        <div class="links-grid">
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/PreferenceAuditList.aspx">Preferências</a>
+                <div class="link-desc">Configurações e preferências do sistema</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/InvitationList.aspx">Convites</a>
+                <div class="link-desc">Gerenciamento de convites do sistema</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/ActivityLogViewer.aspx">Active Log</a>
+                <div class="link-desc">Visualizador de atividades recentes</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://alpha2.pegaplantao.com.br/Admin/LogViewer.aspx">System Log</a>
+                <div class="link-desc">Logs detalhados do sistema</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/CacheManagement.aspx">Cache</a>
+                <div class="link-desc">Gerenciamento de cache do sistema</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/ServiceExchangesAuditList.aspx">Passagens / trocas</a>
+                <div class="link-desc">Auditoria de passagens e trocas</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/ProfessionalByBusinessAuditList.aspx">Usuários Por Empresas</a>
+                <div class="link-desc">Usuários associados a empresas</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/GroupMembersAuditList.aspx">GroupMembers</a>
+                <div class="link-desc">Membros dos grupos do sistema</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/GroupsAuditList.aspx">Groups</a>
+                <div class="link-desc">Grupos do sistema</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/AllowanceAuditList.aspx">Tolerância</a>
+                <div class="link-desc">Configurações de tolerâncias</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/ServiceAuditList.aspx">Audit Plantoes</a>
+                <div class="link-desc">Auditoria de plantões</div>
+            </div>
+            
+            <div class="link-card">
+                <a href="https://pegaplantao.com.br/Admin/DevicesAuditList.aspx">Dispositivos</a>
+                <div class="link-desc">Dispositivos registrados</div>
+            </div>
+        </div>
+        
+        <footer>
+            Tchauuu...brigado!
+        </footer>
+    </div>
+</body>
+</html>
